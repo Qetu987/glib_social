@@ -11,4 +11,3 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.id}_{self.title}_({self.owner})'
-    
