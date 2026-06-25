@@ -32,7 +32,7 @@ class Post_list_base(View):
 
 class HomePage(Post_list_base):
     template_name = 'posts/home.html'
-    page_title = 'Home'
+    page_title = 'Home page'
 
     def get_data(self):
         context = super().get_data()

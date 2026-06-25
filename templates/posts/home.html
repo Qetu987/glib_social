@@ -3,30 +3,28 @@
 
 {% block content %}
     
-    <div style="box-shadow: 0 0 0 1px blue;">
-        <p>profile</p>
-        <p>username: {{ user_data.username }}</p>
-        <p>first_name: {{ user_data.first_name }}</p>
-        <p>last_name: {{ user_data.last_name}}</p>
+    <main class="py-4" style="background-color: #F7F7F7; min-height: calc(100vh - 57px);">
 
+        <div class="container">
 
-        <hr>
+            {% include 'include/posts/page_title.html' %}
 
-        {% if user_data.first_name or user_data.last_name %}
-            <p>{{ user_data.first_name }} {{ user_data.last_name}}</p>
-        {% else %}
-            <p>@{{ user_data.username }}</p>
-        {% endif %}
+            <div class="row g-4">
 
-        
-        <img src="{{ user_data.avatar.url }}" alt="">
-    </div>
+                <div class="col-md-7">
+                    {% include 'include/posts/create_post.html' %}
 
+                    {% for post in post_list %}
+                        {% include 'include/posts/post.html' with post=post %}
+                    {% endfor %}
+                </div>
 
-     <div style="box-shadow: 0 0 0 1px rgb(217, 255, 0);">
-        <p>Page</p>
-        <p>{{ page_title }}</p>1
-    </div>
-
+                <div class="col-md-5">
+                    {% include 'include/posts/trands_list.html' %}
+                    {% include 'include/posts/follow_list.html' %}
+                </div>
+            </div>
+        </div>
+    </main>
     
 {% endblock %}
