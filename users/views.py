@@ -31,7 +31,7 @@ class RegisterView(View):
         return render(request, self.template_name)
 
     def post(self, request):
-        username = request.POST.get('username')        
+        username = request.POST.get('username')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
 

@@ -26,7 +26,6 @@ class Post_list_base(View):
     def get(self, request):
         self.redirect_to_login()
         context = self.get_data()
-        print(context)
         return render(request, self.template_name, context)
 
 
@@ -45,3 +44,45 @@ class HomePage(Post_list_base):
         })
         
         return context
+
+
+class CreatePost(View):
+    anonimys = AnonymousUser()
+    template_name = 'create_post_old.html'
+    page_title = 'Creating post'
+    
+    def get(self, request):
+        context = {
+            'page_title': self.page_title,
+        }
+
+        context = context
+        return render(request, self.template_name, context)
+    
+    def post(self, request):
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        poster = request.POST.get('poster')
+
+        if not title:
+            context = {
+                'page_title': self.page_title,
+                'errors': 'Немає Title'
+            }
+            return render(request, self.template_name, context)
+
+        if request.user == self.anonimys:
+            context = {
+                'page_title': self.page_title,
+                'errors': 'Треба авторизація'
+            }
+            return render(request, self.template_name, context)
+
+        post = Post.objects.create(
+            title = title, 
+            description = description,
+            poster = poster,
+            owner = request.user
+        )
+
+        return redirect('home_page')
