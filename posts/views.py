@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import AnonymousUser
 from django.views import View
-from posts.models import Post
+from posts.models import Post, Like
 from users.models import User
 
 
@@ -50,10 +50,15 @@ class CreatePost(View):
     anonimys = AnonymousUser()
     template_name = 'create_post_old.html'
     page_title = 'Creating post'
+
+    def get_user_data(self):
+        user = User.objects.filter(id=self.request.user.id).first()
+        return user
     
     def get(self, request):
         context = {
             'page_title': self.page_title,
+            'user_data': self.get_user_data(),
         }
 
         context = context
@@ -67,14 +72,16 @@ class CreatePost(View):
         if not title:
             context = {
                 'page_title': self.page_title,
-                'errors': 'Немає Title'
+                'errors': 'Немає Title',
+                'user_data': self.get_user_data(),
             }
             return render(request, self.template_name, context)
 
         if request.user == self.anonimys:
             context = {
                 'page_title': self.page_title,
-                'errors': 'Треба авторизація'
+                'errors': 'Треба авторизація',
+                'user_data': self.get_user_data(),
             }
             return render(request, self.template_name, context)
 
@@ -84,5 +91,26 @@ class CreatePost(View):
             poster = poster,
             owner = request.user
         )
+
+        return redirect('home_page')
+
+
+class LikePost(View):
+    def post(self, request):
+        post_id = request.POST.get('post_id')
+        post = Post.objects.get(id=post_id)
+        owner = request.user
+
+
+        likes = Like.objects.filter(post=post)        
+
+        if owner in [like.owner for like in likes]:
+            obj = Like.objects.get(post=post, owner=owner)
+            obj.delete()
+        else:
+            like = Like.objects.create(
+                owner=owner,
+                post=post
+            )
 
         return redirect('home_page')
