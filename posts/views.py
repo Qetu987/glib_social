@@ -102,7 +102,7 @@ class LikePost(View):
         owner = request.user
 
 
-        likes = Like.objects.filter(post=post)        
+        likes = Like.objects.filter(post=post)
 
         if owner in [like.owner for like in likes]:
             obj = Like.objects.get(post=post, owner=owner)
@@ -114,3 +114,35 @@ class LikePost(View):
             )
 
         return redirect('home_page')
+    
+
+class PostDetail(View):
+    anonimys = AnonymousUser()
+    template_name = 'post_detail_old.html'
+
+    def get(self, request, pk):
+        post = Post.objects.get(id=pk)
+        likes_cont = Like.objects.filter(post=post).count()
+
+
+        page_title = post.title
+        context = {
+            'page_title': page_title,
+            'post': {
+                'post_info': post,
+                'post_likes': {
+                    'is_like': True,
+                    'likes_count': 300,
+                },
+                'post_repost': {
+                    'is_repost': True,
+                    'repost_count': 300,
+                },
+                'post_reviews': {
+                    'reviews_list': [],
+                },
+            },
+        }
+
+        context = context
+        return render(request, self.template_name, context)
